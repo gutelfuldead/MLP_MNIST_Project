@@ -9,13 +9,13 @@ import time
 mnist = fetch_mldata("MNIST original")
 X, y = mnist.data / 255., mnist.target
 sz = 10
-decimation_rng = 4
+decimation_rng = 5
 data_trn = np.empty((sz,4)) # best convergence training
 data_vld = np.empty((sz,4)) # best convergence testing
 y_train, y_validate, y_test = y[:60000], y[60000:70000], X[70000:]
 
 # Iterate over all decimations interested in
-for z in range(2,decimation_rng):
+for z in range(4,decimation_rng):
 
     # Fetch Data and split into training and test sets
     X_train, X_validate, X_test = X[:60000], X[60000:70000], X[70000:]
