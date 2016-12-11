@@ -39,19 +39,19 @@ for z in range(1,decimation_rng):
     start = time.time()
     for i in range(1,sz):
         mlp1 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', momentum=0,max_iter=1000, alpha=1e-4,
-                            solver='sgd', verbose=True, tol=1e-4, random_state=1, learning_rate_init=.1)
+                            solver='sgd', verbose=False, tol=1e-4, random_state=1, learning_rate_init=.1)
 
         # print("\nmlp2 no momentum; num PEs={}").format(i+1)
         mlp2 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', momentum=0,max_iter=1000, alpha=1e-4,
-                            solver='sgd', verbose=True, tol=1e-4, random_state=1, learning_rate_init=.1)
+                            solver='sgd', verbose=False, tol=1e-4, random_state=1, learning_rate_init=.1)
 
         # print("\nmlp1 momentum; num PEs={}").format(i+1)
         mlp3 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', max_iter=1000, alpha=1e-4,
-                            solver='sgd', verbose=True, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False, learning_rate_init=.1)
+                            solver='sgd', verbose=False, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False, learning_rate_init=.1)
 
         # print("\nmlp2 momentum; num PEs={}").format(i+1)
         mlp4 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', max_iter=1000, alpha=1e-4,
-                            solver='sgd', verbose=True, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False,learning_rate_init=.1)
+                            solver='sgd', verbose=False, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False,learning_rate_init=.1)
 
         # Train Data
         print("downsamp - {}: Generating data for one hidden layer, with no momentum with {} PEs per layer").format(dec, i*10)

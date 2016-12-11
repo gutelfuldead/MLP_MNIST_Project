@@ -6,7 +6,7 @@ from sklearn.datasets import fetch_mldata
 from sklearn.neural_network import MLPClassifier
 from mlp_nmist_project_functions import depickle, pickleme, plotrate, plotsuccess
 
-PLOT      = False
+PLOT = False
 PLOT_SAVE = True
 
 ###################################################
@@ -29,13 +29,13 @@ for dec in range(1,decimation_rng):
 
     print("With decimation factor of {} total time was {}").format(dec,times[dec-1])
 
-    plotrate("{}x decimation - One HL No Momentum MLP 10-100 PEs".format(dec),error_one_hl_nomom)
-    plotrate("{}x decimation - One HL with Momentum MLP 10-100 PEs".format(dec),error_one_hl_mom)
-    plotrate("{}x decimation - Two HL No momentum MLP 10-100 PEs per layer".format(dec),error_two_hl_nomom)
-    plotrate("{}x decimation - Two HL with momentum MLP 10-100 PEs per layer".format(dec),error_two_hl_mom)
+    plotrate("{}x decimation - One HL No Momentum MLP 10-100 PEs".format(dec),error_one_hl_nomom,PLOT,PLOT_SAVE)
+    plotrate("{}x decimation - One HL with Momentum MLP 10-100 PEs".format(dec),error_one_hl_mom,PLOT,PLOT_SAVE)
+    plotrate("{}x decimation - Two HL No momentum MLP 10-100 PEs per layer".format(dec),error_two_hl_nomom,PLOT,PLOT_SAVE)
+    plotrate("{}x decimation - Two HL with momentum MLP 10-100 PEs per layer".format(dec),error_two_hl_mom,PLOT,PLOT_SAVE)
 
-    _,_,_ = plotsuccess("{}x decimation - Training Data Error".format(dec),lbls=lbls,data=data_trn)
-    pe_idx,lbl_idx,err = plotsuccess("{}x decimation - Validation Data Error".format(dec),lbls=lbls,data=data_vld,show_error=True)
+    _,_,_ = plotsuccess("{}x decimation - Training Data Error".format(dec),lbls=lbls,data=data_trn,PLOT=PLOT,PLOT_SAVE=PLOT_SAVE)
+    pe_idx,lbl_idx,err = plotsuccess("{}x decimation - Validation Data Error".format(dec),lbls=lbls,data=data_vld,show_error=True,PLOT=PLOT,PLOT_SAVE=PLOT_SAVE)
 
     if err > best:
         best = err

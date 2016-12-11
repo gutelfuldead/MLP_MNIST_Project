@@ -15,7 +15,7 @@ def pickleme(name,data):
     output.close()
     return
 
-def plotrate(title,data):
+def plotrate(title,data,PLOT=False,PLOT_SAVE=False):
     mymin = 1000.0
     idx = 100
     plt.figure()
@@ -38,7 +38,7 @@ def plotrate(title,data):
     plt.close()
     return
 
-def plotsuccess(title,data,lbls,show_error=False):
+def plotsuccess(title,data,lbls,show_error=False,PLOT=False,PLOT_SAVE=False):
     # find num of PEs associated with max element
     i,j = np.unravel_index(data.argmax(), data.shape) # i refers to num PEs; j to the label
     plt.figure()
