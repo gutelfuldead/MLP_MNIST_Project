@@ -5,20 +5,21 @@ from sklearn.neural_network import MLPClassifier
 import pickle
 from scipy.signal import decimate
 import time
+from mlp_nmist_project_functions import pickleme
 
 mnist = fetch_mldata("MNIST original")
 X, y = mnist.data / 255., mnist.target
 sz = 10
-decimation_rng = 5
+decimation_rng = 6
 data_trn = np.empty((sz,4)) # best convergence training
 data_vld = np.empty((sz,4)) # best convergence testing
-y_train, y_validate, y_test = y[:60000], y[60000:70000], X[70000:]
+y_train, y_validate, y_test = y[:50000], y[50000:60000], y[60000:]
 
 # Iterate over all decimations interested in
-for z in range(4,decimation_rng):
+for z in range(1,decimation_rng):
 
-    # Fetch Data and split into training and test sets
-    X_train, X_validate, X_test = X[:60000], X[60000:70000], X[70000:]
+    # Fetch Data and split into training,validation, and test sets
+    X_train, X_validate, X_test = X[:50000], X[50000:60000], X[60000:]
 
     # Decimate by a factor of n
     dec = z
@@ -37,20 +38,20 @@ for z in range(4,decimation_rng):
     # loop one hidden layer from 1 --> 100 PEs
     start = time.time()
     for i in range(1,sz):
-        mlp1 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', momentum=0,max_iter=100, alpha=1e-4,
-                            solver='sgd', verbose=False, tol=1e-4, random_state=1, learning_rate_init=.1)
+        mlp1 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', momentum=0,max_iter=1000, alpha=1e-4,
+                            solver='sgd', verbose=True, tol=1e-4, random_state=1, learning_rate_init=.1)
 
         # print("\nmlp2 no momentum; num PEs={}").format(i+1)
-        mlp2 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', momentum=0,max_iter=100, alpha=1e-4,
-                            solver='sgd', verbose=False, tol=1e-4, random_state=1, learning_rate_init=.1)
+        mlp2 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', momentum=0,max_iter=1000, alpha=1e-4,
+                            solver='sgd', verbose=True, tol=1e-4, random_state=1, learning_rate_init=.1)
 
         # print("\nmlp1 momentum; num PEs={}").format(i+1)
-        mlp3 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', max_iter=100, alpha=1e-4,
-                            solver='sgd', verbose=False, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False, learning_rate_init=.1)
+        mlp3 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', max_iter=1000, alpha=1e-4,
+                            solver='sgd', verbose=True, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False, learning_rate_init=.1)
 
         # print("\nmlp2 momentum; num PEs={}").format(i+1)
-        mlp4 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', max_iter=100, alpha=1e-4,
-                            solver='sgd', verbose=False, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False,learning_rate_init=.1)
+        mlp4 = MLPClassifier(hidden_layer_sizes=(i*10,i*10), activation='relu', max_iter=1000, alpha=1e-4,
+                            solver='sgd', verbose=True, tol=1e-4, random_state=1,momentum=0.9,nesterovs_momentum=False,learning_rate_init=.1)
 
         # Train Data
         print("downsamp - {}: Generating data for one hidden layer, with no momentum with {} PEs per layer").format(dec, i*10)
@@ -83,11 +84,6 @@ for z in range(4,decimation_rng):
     ttl_time = end-start
 
     print("Took {} s for decimation of {}").format(ttl_time,dec)
-
-    def pickleme(name,data):
-        output = open('../pkls/'+name+'.pkl','wb')
-        pickle.dump(data,output)
-        output.close()
 
     pickleme('data_trn_dsamp_'+str(dec),data_trn)
     pickleme('data_vld_dsamp_'+str(dec),data_vld)
