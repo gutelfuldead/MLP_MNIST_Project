@@ -2,6 +2,18 @@ import itertools
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.datasets import fetch_mldata
+
+def fetch_MNIST_data():
+    mnist = fetch_mldata("MNIST original")
+    X, y = mnist.data / 255., mnist.target
+    X_train = X[:60000]
+    y_train = y[:60000]
+    X_validate = depickle('X_validate')
+    y_validate = depickle('y_validate')
+    X_test = depickle('X_test')
+    y_test = depickle('y_test')
+    return X_train, y_train, X_validate, y_validate, X_test, y_test
 
 def depickle(filename):
     pkl_file = open('../pkls/'+filename+'.pkl', 'rb')

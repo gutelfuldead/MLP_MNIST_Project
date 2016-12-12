@@ -3,11 +3,10 @@
 # Test set score: 0.883300
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.datasets import fetch_mldata
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
 from scipy.signal import decimate
-from mlp_nmist_project_functions import depickle, pickleme, plot_confusion_matrix
+from mlp_nmist_project_functions import depickle, pickleme, plot_confusion_matrix, fetch_MNIST_data
 
 
 PLOT      = True
@@ -25,10 +24,7 @@ best_decimation = depickle('optimal_decimation')
 class_names = np.array(['0','1','2','3','4','5','6','7','8','9'])
 
 # Fetch Data and split into training, validation, and test sets
-mnist = fetch_mldata("MNIST original")
-X, y = mnist.data / 255., mnist.target
-X_train, X_validate, X_test = X[:50000], X[50000:60000], X[60000:]
-y_train, y_validate, y_test = y[:50000], y[50000:60000], y[60000:]
+X_train, y_train, X_validate, y_validate, X_test, y_test = fetch_MNIST_data()
 
 # decimate data down to optimal value
 X_train = decimate(X_train, best_decimation, axis=1)

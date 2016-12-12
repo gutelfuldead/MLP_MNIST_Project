@@ -1,7 +1,7 @@
 (dp0
 S'learning_rate_init'
 p1
-F0.06
+F0.01
 sS'random_state'
 p2
 I1
@@ -36,13 +36,13 @@ NNNI-1
 I-1
 I0
 tp14
-bS'F\x00\x00\x00\x00\x00\x00\x00'
+bS'd\x00\x00\x00\x00\x00\x00\x00'
 p15
 tp16
 Rp17
 g8
 (g12
-S'F\x00\x00\x00\x00\x00\x00\x00'
+S'd\x00\x00\x00\x00\x00\x00\x00'
 p18
 tp19
 Rp20
