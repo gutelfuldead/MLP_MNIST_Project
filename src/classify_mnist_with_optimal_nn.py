@@ -68,16 +68,16 @@ if PLOT == True:
 plt.close()
 
 # find distribution of wrong values
-wrong = []
-wrong_v = []
+wrong_index = []
+wrong_value = []
 for i in range(0,len(X_test)):
     if y_pred[i] != y_test[i]:
-        wrong.append(i)
-        wrong_v.append(y_test[i])
+        wrong_index.append(i)
+        wrong_value.append(y_test[i])
 
 # plot histogram of wrong values
 plt.figure()
-plt.hist(wrong_v)
+plt.hist(wrong_value)
 title = "Histogram of missclassified digits"
 plt.title(title)
 plt.xlabel("Misclassified digits")
@@ -89,16 +89,23 @@ if PLOT == True:
     plt.show()
 plt.close()
 
+print "Total number of misclassified digits = %d" % len(wrong_value)
+
+wrong_digit = np.zeros(9)
+for k in range(1,10):
+    for i in range(0,len(wrong_value)):
+        if wrong_value[i] == k:
+            wrong_digit[k-1] = int(wrong_index[i])
+
 # Plot a few examples of incorrectly classified digits
 plotweights(mlp.coefs_[0],PLOT,PLOT_SAVE)
 X_train, y_train, X_validate, y_validate, X_test, y_test = fetch_MNIST_data()
 plt.figure()
-offset = len(wrong)-15
 for i in range(0,9):
     plt.subplot(3,3,i+1)
-    plt.imshow(X_test[wrong[i+offset]].reshape(28,28))
+    plt.imshow(X_test[wrong_digit[i]].reshape(28,28))
     plt.axis('off')
-    lbl = "{}->{}".format(y_test[wrong[i+offset]], y_pred[wrong[i+offset]])
+    lbl = "{}->{}".format(y_test[wrong_digit[i]], y_pred[wrong_digit[i]])
     plt.title(lbl)
 if PLOT_SAVE == True:
     plt.savefig('../imgs/misclassified_digits.png', bbox_inches='tight')
