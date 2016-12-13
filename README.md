@@ -4,7 +4,7 @@ Done for completion of UFL EEL5840: Elements of Machine Intelligence.
 
 All data necessary to view final results has been pre-populated in the git.
 
-To view results run `./src/classify_mnist_with_optimal_nn.py`
+To view results run `python ./src/classify_mnist_with_optimal_nn.py`
 
 To regenerate all data run in order:
 
