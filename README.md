@@ -16,7 +16,8 @@ Structure:
 MLP_NMIST_Project
 |   README.md
 |___docs
-|   |   Project3.pdf # project description and requirements
+|   |   Project3.pdf      # project description and requirements
+|   |   proj3_results.pdf # analysis of the systems results
 |___imgs
 |   |   Contains images produced form source code
 |___pkls
