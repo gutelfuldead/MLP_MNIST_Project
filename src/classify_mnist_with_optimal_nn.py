@@ -1,24 +1,23 @@
-# Training set score: 0.999980
-# Validation set score: 0.382200
-# Test set score: 0.883300
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import confusion_matrix
 from scipy.signal import decimate
-from mlp_nmist_project_functions import depickle, pickleme, plot_confusion_matrix, fetch_MNIST_data
-
+from mlp_nmist_project_functions import depickle, plotweights, pickleme, plot_confusion_matrix, fetch_MNIST_data
 
 PLOT      = True
 PLOT_SAVE = True
 
-##############################################
-# MAIN
-##############################################
-
 # load the optimal parameters generated from find_optimal_parameters.py
 opt_parameters = depickle('optimal_parameters')
 best_decimation = depickle('optimal_decimation')
+pe_rng = depickle('PE_pkl_rng')
+minPE, maxPE = pe_rng[0], pe_rng[1]
+dec = depickle('decimation_rng')
+best_ann = depickle("optimal_predictor_for_{}-{}PEs_{}-declevels".format(10*minPE,(maxPE-1)*10,dec-1))
+print "Using optimal predictor:"
+print best_ann
 
 # class_names used for confusion matrix
 class_names = np.array(['0','1','2','3','4','5','6','7','8','9'])
@@ -48,7 +47,7 @@ plt.title(title)
 plt.xlabel("Epochs")
 plt.ylabel("Training Error")
 if PLOT_SAVE == True:
-    title = title.replace(" ", "")
+    title = title.replace(" ", "-")
     plt.savefig('../imgs/'+title+'.png', bbox_inches='tight')
 if PLOT == True:
     plt.show()
@@ -63,41 +62,46 @@ np.set_printoptions(precision=2)
 plt.figure()
 plot_confusion_matrix(cnf_matrix, classes=class_names,title='Confusion matrix')
 if PLOT_SAVE == True:
-    title = title.replace(" ", "")
     plt.savefig('../imgs/confusion-matrix.png', bbox_inches='tight')
 if PLOT == True:
     plt.show()
 plt.close()
 
-# Plot a few examples of incorrectly classified digits
+# find distribution of wrong values
 wrong = []
+wrong_v = []
 for i in range(0,len(X_test)):
     if y_pred[i] != y_test[i]:
         wrong.append(i)
+        wrong_v.append(y_test[i])
 
-# plt.figure()
-# offset = len(wrong)-15
-# for i in range(0,4):
-#     plt.subplot(2,2,i+1)
-#     plt.imshow(X_test[wrong[i+offset]].reshape(a,a))
-#     lbl = "Should be {}; classified as {}".format(y_test[wrong[i+offset]], y_pred[wrong[i+offset]])
-#     plt.title(lbl)
-# plt.title('Examples of misclassified digits in optimal predictor')
-# if PLOT_SAVE == True:
-#     title = title.replace(" ", "")
-#     plt.savefig('../imgs/'+title+'.png', bbox_inches='tight')
-# if PLOT == True:
-#     plt.show()
-# plt.close()
+# plot histogram of wrong values
+plt.figure()
+plt.hist(wrong_v)
+title = "Histogram of missclassified digits"
+plt.title(title)
+plt.xlabel("Misclassified digits")
+plt.ylabel("Frequency")
+if PLOT_SAVE == True:
+    title = title.replace(" ", "-")
+    plt.savefig('../imgs/'+title+'.png', bbox_inches='tight')
+if PLOT == True:
+    plt.show()
+plt.close()
 
-# Plot some example Weights
-# fig, axes = plt.subplots(4, 4)
-# # use global min / max to ensure all weights are shown on the same scale
-# vmin, vmax = mlp.coefs_[0].min(), mlp.coefs_[0].max()
-# for coef, ax in zip(mlp.coefs_[0].T, axes.ravel()):
-#     ax.matshow(coef.reshape(28, 28), cmap=plt.cm.gray, vmin=.5 * vmin,
-#                vmax=.5 * vmax)
-#     ax.set_xticks(())
-#     ax.set_yticks(())
-#
-# plt.show()
+# Plot a few examples of incorrectly classified digits
+plotweights(mlp.coefs_[0],PLOT,PLOT_SAVE)
+X_train, y_train, X_validate, y_validate, X_test, y_test = fetch_MNIST_data()
+plt.figure()
+offset = len(wrong)-15
+for i in range(0,9):
+    plt.subplot(3,3,i+1)
+    plt.imshow(X_test[wrong[i+offset]].reshape(28,28))
+    plt.axis('off')
+    lbl = "{}->{}".format(y_test[wrong[i+offset]], y_pred[wrong[i+offset]])
+    plt.title(lbl)
+if PLOT_SAVE == True:
+    plt.savefig('../imgs/misclassified_digits.png', bbox_inches='tight')
+if PLOT == True:
+    plt.show()
+plt.close()

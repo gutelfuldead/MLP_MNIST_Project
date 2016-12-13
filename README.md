@@ -1,43 +1,81 @@
-# MLP_NMIST_Project
 Multi-Layer Perceptron Analysis on NMIST handwriting set
+--------------------------------------------------------
+Done for completion of UFL EEL5840: Elements of Machine Intelligence.
+
+All data necessary to view final results has been pre-populated in the git.
 
 To view results run ./src/classify_mnist_with_optimal_nn.py
 
-All data necessary to run this has been prepopulated in the git
-
 To regenerate all data run in order:
-1. ./src/generate_data_with_downsampling.py
+1. ./src/generate_data_with_downsampling.py min#PEs max#PEs DecimationRange
 2. ./src/find_optimal_parameters.py
 3. ./src/classify_mnist_with_optimal_nn.py
 
-## ./src -- Contains all source python code
+Structure:
+```
+MLP_NMIST_Project
+|   README.md
+|___docs
+|   |   Project3.pdf # project description and requirements
+|___imgs
+|   |   Contains images produced form source code
+|___pkls
+|   |   Contains .pkl files from pre-generated data and location for newly generated data
+|___src
+|   |   classify_mnist_with_optimal_nn.py  # used to classify with optimal ANN
+|   |   find_optimal_parameters.py         # used to find optimal ANN
+|   |   generate_data_with_downsampling.py # used to create all the models
+|   |   mlp_nmist_project_functions.py     # Functions used throughout programs
+|   |   mpl_nmist_project_functions.pyc    # Compiled functions
+```
 
-./src/generate_data_with_downsampling.py
+## ./src
 
-> Imports MNIST data set and splits last 10k values into two groups, validation and testing and pickles it for later usage
-> iterates over 200 different configurations of multilayer perceptrons with the training data
-> 5 different decimations on the training data size, 10 different levels of neuron density, and 4 different unique MLP configurations with single or double hidden layers and with or without momentum
-> pickles all of the generated MLP data for later Analysis
-> tests all of the configurations using both the training data and validation data and pickles the results
+>**./src/generate_data_with_downsampling.py**
 
-./src/find_optimal_parameters.py
+*Usage*
 
-> Creates plots based on the pickle files from generate_data_with_downsampling.py and finds the optimal configuration
-> Toggling `PLOT` and `PLOT_SAVE` between `True` and `False` to show all of the generated plots and/or save them to ../imgs respectively.
-> Tweaks optimal configuration by finding the best learning rate for that configuration using the training data again
-> pickles the configurations for the best MLP
+./src/generate_data_with_downsampling.py minPE maxPE DecimationRng
 
-./src/classify_mnist_with_optimal_nn.py
+* minPE : must be multiple of 10; is the minimum number of Neurons used in each configuration
+* maxPE : must be multiple of 10; is the maximum number of Neurons used in each configuration
+* DecimationRng : Will iterate over all configurations(minPE -> maxPE) over a decimation level of training data
 
-> Uses the optimal configurations from ./src/find_optimal_parameters.py to classify the training, validation, and testing data
-> Generates plots of the learning curve of the optimal MLP and produces a confusion matrix for the test data's classification
+4 Different Configurations used:
+1. Single hidden layer ANN with no momentum
+1. Single hidden layer ANN with momentum
+1. Double hidden layer ANN with no momentum (equal number of neurons in each layer)
+1. Double hidden layer ANN with momentum (equal number of neurons in each layer)
 
-./src/mlp_nmist_project_functions.py
+**Will create a total of 4 x DecimationRng x (maxPE-minPE + 1)/10 unique runs**
 
-> various functions made for this project
+Imports MNIST data set and splits last 10k values into two groups, validation and testing and pickles it for later usage.
 
-## ./pkls -- Contains all of the pickled data
+Data distribution:
 
-## ./imgs -- Contains all of the plot images generated from ./src files
+| Data set| number data points |
+|---------|--------------------|
+|Training   | 60k|
+|Validation | 5k |
+|Testing    | 5k |
 
-## ./docs -- Contains project description and results
+
+>**./src/find_optimal_parameters.py**
+
+Creates plots based on the pickle files from generate_data_with_downsampling.py and finds the optimal configuration
+
+Toggling `PLOT` and `PLOT_SAVE` between `True` and `False` to show all of the generated plots and/or save them to ../imgs respectively.
+
+Tweaks optimal configuration by finding the best learning rate for that configuration using the training data again
+
+pickles the configurations for the best MLP
+
+>**./src/classify_mnist_with_optimal_nn.py**
+
+Uses the optimal configurations from ./src/find_optimal_parameters.py to classify the training, validation, and testing data
+
+Generates plots of the learning curve of the optimal MLP and produces a confusion matrix for the test data's classification
+
+>**./src/mlp_nmist_project_functions.py**
+
+various functions made for this project

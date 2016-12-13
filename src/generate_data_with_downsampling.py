@@ -1,7 +1,22 @@
-# test over huge iteration set
+#!/usr/bin/python2.7
+'''
+USAGE:
+    ./generate_data_with_downsampling.py minPE maxPE decimation_rng
+    minPE and maxPE MUST be a multiple of 10
+    Will generate data for #PEs from minPE --> maxPE in multiples of 10
+    For each of these sets will repeat data for decimation levels 1 -> decimation_rng
+
+example :
+    ./generate_data_with_downsampling.py 10 100 3
+    will generate ANNs ranging from 10 -> 100 PEs for decimations 1,2, and 3
+
+Will pickle data for usage in find_optimal_parameters.py
+'''
+
 import numpy as np
 import pickle
 import time
+import sys
 import matplotlib.pyplot as plt
 from scipy.signal import decimate
 from sklearn.datasets import fetch_mldata
@@ -9,10 +24,14 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.utils import shuffle
 from mlp_nmist_project_functions import pickleme, depickle
 
-PE_rng = 10 # will range number of PEs used form 10 -> 10*PE_rng in intervals of 10
-decimation_rng = 6 # will range total decimation runs from 1 -> decimation_rng
-data_trn = np.empty((PE_rng,4)) # best convergence training
-data_vld = np.empty((PE_rng,4)) # best convergence testing
+minPE = int(sys.argv[1])/10
+maxPE = int(sys.argv[2])/10+1
+PE_pkl_rng = [minPE,maxPE]
+pickleme('PE_pkl_rng',PE_pkl_rng)
+decimation_rng = int(sys.argv[3])+1
+pickleme('decimation_rng',decimation_rng)
+data_trn = np.empty((maxPE-minPE,4)) # best convergence training
+data_vld = np.empty((maxPE-minPE,4)) # best convergence testing
 
 # initial retrieval of data
 mnist = fetch_mldata("MNIST original")
@@ -20,16 +39,18 @@ X, y = mnist.data / 255., mnist.target
 y_train = y[:60000]
 X_train = X[:60000]
 
+def unison_shuffled_copies(a, b):
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p], p
+
 # In loaded MNIST data first 60,000 used for training equally distributed 0-9
 # 60,000 - 70,000 used for testing/validating equally distirbuted 0-9
 # need to randomly reindex 60,000-70,000 and split in half for validation and testing data
-x_shuffle,y_shuffle = shuffle(X[60000:], y[60000:], random_state=0)
+x_shuffle,y_shuffle, p = unison_shuffled_copies(X[60000:], y[60000:])
 X_validate, X_test = x_shuffle[:5000], x_shuffle[5000:]
 y_validate, y_test = y_shuffle[:5000], y_shuffle[5000:]
-pickleme('X_validate',X_validate)
-pickleme('X_test',X_test)
-pickleme('y_validate',y_validate)
-pickleme('y_test',y_test)
+pickleme('random_index',p)
 
 plt.figure()
 plt.subplot(2,1,1)
@@ -48,7 +69,7 @@ for z in range(1,decimation_rng):
 
     # Fetch Data and split into training,validation, and test sets
     X_train = X[:60000]
-    X_validate = depickle('X_validate')
+    X_validate = x_shuffle[:5000]
 
     # Decimate by a factor of n
     dec = z
@@ -66,7 +87,7 @@ for z in range(1,decimation_rng):
 
     # loop one hidden layer from 1 --> 100 PEs
     start = time.time()
-    for i in range(1,PE_rng):
+    for i in range(minPE,maxPE):
         mlp0 = MLPClassifier(hidden_layer_sizes=(i*10), activation='relu', momentum=0,max_iter=1000, alpha=1e-4,
                             solver='sgd', verbose=False, tol=1e-4, random_state=1, learning_rate_init=.1)
 
@@ -90,16 +111,16 @@ for z in range(1,decimation_rng):
         mlp3.fit(X_train, y_train)
 
         # capture the training error
-        data_trn[i,0] = mlp0.score(X_train, y_train)
-        data_trn[i,1] = mlp1.score(X_train, y_train)
-        data_trn[i,2] = mlp2.score(X_train, y_train)
-        data_trn[i,3] = mlp3.score(X_train, y_train)
+        data_trn[i-minPE,0] = mlp0.score(X_train, y_train)
+        data_trn[i-minPE,1] = mlp1.score(X_train, y_train)
+        data_trn[i-minPE,2] = mlp2.score(X_train, y_train)
+        data_trn[i-minPE,3] = mlp3.score(X_train, y_train)
 
         # capture the test error
-        data_vld[i,0] = mlp0.score(X_validate, y_validate)
-        data_vld[i,1] = mlp1.score(X_validate, y_validate)
-        data_vld[i,2] = mlp2.score(X_validate, y_validate)
-        data_vld[i,3] = mlp3.score(X_validate, y_validate)
+        data_vld[i-minPE,0] = mlp0.score(X_validate, y_validate)
+        data_vld[i-minPE,1] = mlp1.score(X_validate, y_validate)
+        data_vld[i-minPE,2] = mlp2.score(X_validate, y_validate)
+        data_vld[i-minPE,3] = mlp3.score(X_validate, y_validate)
 
         error_one_hl_nomom.append(mlp0.loss_curve_)
         error_one_hl_mom.append(mlp1.loss_curve_)
@@ -111,10 +132,10 @@ for z in range(1,decimation_rng):
 
     print("Took {} s for decimation of {}").format(ttl_time,dec)
 
-    pickleme('data_trn_dsamp_'+str(dec),data_trn)
-    pickleme('data_vld_dsamp_'+str(dec),data_vld)
-    pickleme('error_one_hl_nomom_dsamp_'+str(dec),error_one_hl_nomom)
-    pickleme('error_one_hl_mom_dsamp_'+str(dec),error_one_hl_mom)
-    pickleme('error_two_hl_nomom_dsamp_'+str(dec),error_two_hl_nomom)
-    pickleme('error_two_hl_mom_dsamp_'+str(dec),error_two_hl_mom)
-    pickleme('ttl_time_dsamp_'+str(dec),ttl_time)
+    pickleme('data_trn_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',data_trn)
+    pickleme('data_vld_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',data_vld)
+    pickleme('error_one_hl_nomom_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',error_one_hl_nomom)
+    pickleme('error_one_hl_mom_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',error_one_hl_mom)
+    pickleme('error_two_hl_nomom_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',error_two_hl_nomom)
+    pickleme('error_two_hl_mom_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',error_two_hl_mom)
+    pickleme('ttl_time_dsamp_'+str(dec)+'_'+str(minPE*10)+'-'+str((maxPE-1)*10)+'PEs',ttl_time)
