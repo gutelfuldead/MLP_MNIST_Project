@@ -27,7 +27,6 @@ MLP_MNIST_Project
 |   |   find_optimal_parameters.py         # used to find optimal ANN
 |   |   generate_data_with_downsampling.py # used to create all the models
 |   |   mlp_mnist_project_functions.py     # Functions used throughout programs
-|   |   mpl_mnist_project_functions.pyc    # Compiled functions
 ```
 
 ## ./src
