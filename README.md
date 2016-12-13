@@ -7,8 +7,11 @@ All data necessary to view final results has been pre-populated in the git.
 To view results run ./src/classify_mnist_with_optimal_nn.py
 
 To regenerate all data run in order:
+
 1. ./src/generate_data_with_downsampling.py min#PEs max#PEs DecimationRange
+
 2. ./src/find_optimal_parameters.py
+
 3. ./src/classify_mnist_with_optimal_nn.py
 
 Structure:
@@ -42,9 +45,13 @@ MLP_MNIST_Project
 * DecimationRng : Will iterate over all configurations(minPE -> maxPE) over a decimation level of training data
 
 4 Different Configurations used:
+
 1. Single hidden layer ANN with no momentum
+
 1. Single hidden layer ANN with momentum
+
 1. Double hidden layer ANN with no momentum (equal number of neurons in each layer)
+
 1. Double hidden layer ANN with momentum (equal number of neurons in each layer)
 
 **Will create a total of 4 x DecimationRng x (maxPE-minPE + 1)/10 unique runs**
