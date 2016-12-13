@@ -78,7 +78,7 @@ for i in range(0,len(X_test)):
 # plot histogram of wrong values
 plt.figure()
 plt.hist(wrong_value)
-title = "Histogram of missclassified digits"
+title = "Histogram of misclassified digits (total of %d)" % len(wrong_value)
 plt.title(title)
 plt.xlabel("Misclassified digits")
 plt.ylabel("Frequency")
@@ -89,7 +89,6 @@ if PLOT == True:
     plt.show()
 plt.close()
 
-print "Total number of misclassified digits = %d" % len(wrong_value)
 
 wrong_digit = np.zeros(9)
 for k in range(1,10):
