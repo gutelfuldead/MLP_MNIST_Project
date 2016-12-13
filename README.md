@@ -1,4 +1,4 @@
-Multi-Layer Perceptron Analysis on NMIST handwriting set
+Multi-Layer Perceptron Analysis on MNIST handwriting set
 --------------------------------------------------------
 Done for completion of UFL EEL5840: Elements of Machine Intelligence.
 
@@ -13,7 +13,7 @@ To regenerate all data run in order:
 
 Structure:
 ```
-MLP_NMIST_Project
+MLP_MNIST_Project
 |   README.md
 |___docs
 |   |   Project3.pdf      # project description and requirements
@@ -26,8 +26,8 @@ MLP_NMIST_Project
 |   |   classify_mnist_with_optimal_nn.py  # used to classify with optimal ANN
 |   |   find_optimal_parameters.py         # used to find optimal ANN
 |   |   generate_data_with_downsampling.py # used to create all the models
-|   |   mlp_nmist_project_functions.py     # Functions used throughout programs
-|   |   mpl_nmist_project_functions.pyc    # Compiled functions
+|   |   mlp_mnist_project_functions.py     # Functions used throughout programs
+|   |   mpl_mnist_project_functions.pyc    # Compiled functions
 ```
 
 ## ./src
@@ -77,6 +77,6 @@ Uses the optimal configurations from ./src/find_optimal_parameters.py to classif
 
 Generates plots of the learning curve of the optimal MLP and produces a confusion matrix for the test data's classification
 
->**./src/mlp_nmist_project_functions.py**
+>**./src/mlp_mnist_project_functions.py**
 
 various functions made for this project
