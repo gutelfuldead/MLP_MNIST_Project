@@ -4,15 +4,15 @@ Done for completion of UFL EEL5840: Elements of Machine Intelligence.
 
 All data necessary to view final results has been pre-populated in the git.
 
-To view results run ./src/classify_mnist_with_optimal_nn.py
+To view results run `./src/classify_mnist_with_optimal_nn.py`
 
 To regenerate all data run in order:
 
-1. ./src/generate_data_with_downsampling.py **min_number_of_PEs max_number_of_PEs DecimationRange**
+1. `python ./src/generate_data_with_downsampling.py **min_number_of_PEs max_number_of_PEs DecimationRange**`
 
-2. ./src/find_optimal_parameters.py
+2. `python ./src/find_optimal_parameters.py`
 
-3. ./src/classify_mnist_with_optimal_nn.py
+3. `python ./src/classify_mnist_with_optimal_nn.py`
 
 Structure:
 ```
@@ -34,11 +34,11 @@ MLP_MNIST_Project
 
 ## ./src
 
->**./src/generate_data_with_downsampling.py**
+**./src/generate_data_with_downsampling.py**
 
 *Usage*
 
-./src/generate_data_with_downsampling.py minPE maxPE DecimationRng
+`python ./src/generate_data_with_downsampling.py minPE maxPE DecimationRng`
 
 * minPE : must be multiple of 10; is the minimum number of Neurons used in each configuration
 * maxPE : must be multiple of 10; is the maximum number of Neurons used in each configuration
@@ -67,7 +67,7 @@ Data distribution:
 |Testing    | 5k |
 
 
->**./src/find_optimal_parameters.py**
+**./src/find_optimal_parameters.py**
 
 Creates plots based on the pickle files from generate_data_with_downsampling.py and finds the optimal configuration
 
@@ -77,12 +77,12 @@ Tweaks optimal configuration by finding the best learning rate for that configur
 
 pickles the configurations for the best MLP
 
->**./src/classify_mnist_with_optimal_nn.py**
+**./src/classify_mnist_with_optimal_nn.py**
 
 Uses the optimal configurations from ./src/find_optimal_parameters.py to classify the training, validation, and testing data
 
 Generates plots of the learning curve of the optimal MLP and produces a confusion matrix for the test data's classification
 
->**./src/mlp_mnist_project_functions.py**
+**./src/mlp_mnist_project_functions.py**
 
 various functions made for this project
