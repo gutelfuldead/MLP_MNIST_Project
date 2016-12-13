@@ -8,7 +8,7 @@ To view results run `python ./src/classify_mnist_with_optimal_nn.py`
 
 To regenerate all data run in order:
 
-1. `python ./src/generate_data_with_downsampling.py minPE maxPE DecimationRange**`
+1. `python ./src/generate_data_with_downsampling.py minPE maxPE DecimationRange`
 
 2. `python ./src/find_optimal_parameters.py`
 
