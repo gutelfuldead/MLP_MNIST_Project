@@ -22,7 +22,7 @@ MLP_MNIST_Project
 |   |   Project3.pdf      # project description and requirements
 |   |   proj3_results.pdf # analysis of the systems results
 |___imgs
-|   |   Contains images produced form source code
+|   |   Contains images produced from source code
 |___pkls
 |   |   Contains .pkl files from pre-generated data and location for newly generated data
 |___src
